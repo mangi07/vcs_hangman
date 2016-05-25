@@ -1,3 +1,5 @@
+require 'yaml'
+
 module Ben
 	class Game
 		attr_accessor :guesses, :word, :difficulty
@@ -47,11 +49,15 @@ module Ben
 		end
 
 		def save
+			File.open( "game_data", "w" ) { |f| f.puts YAML::dump( self ) }
 		end
 
-		def load
+		def self.load
+			game_data = File.open( "game_data", "r" ) { |f| f.readlines.join }
+			YAML::load( game_data )
 		end
 
 	end
 		
 end
+
