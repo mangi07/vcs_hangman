@@ -1,0 +1,24 @@
+<html>
+  <head>
+  	<style>
+  		body {
+  			background: <%= styles[:background] %>;
+  			color: <%= styles[:color] %>;
+  		}
+  	</style>
+  </head>
+  <body>
+    <div>Difficulty: <span id="difficulty">4</span></div>
+    <div>Guesses Remaining: <span id="guesses-remaining">4</span></div>
+  	<form>
+  		<input type='text' name='guess' />
+  		<input type='submit' value='Guess!' />
+    </form>
+    <div id="word"></div>
+    <button id="save-game">Save Game</button>
+    <button id="load-game">Load Saved Game</button>
+    <button id="new-game">New Game</button>
+
+    <script src="js/index.js"></script>
+  </body>
+</html>
