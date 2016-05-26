@@ -10,15 +10,27 @@
   <body>
     <div>Difficulty: <span id="difficulty">4</span></div>
     <div>Guesses Remaining: <span id="guesses-remaining">4</span></div>
-  	<form>
+  	
+    <form>
   		<input type='text' name='guess' />
   		<input type='submit' value='Guess!' />
     </form>
     <div id="word"></div>
+
+
     <button id="save-game">Save Game</button>
     <button id="load-game">Load Saved Game</button>
     <button id="new-game">New Game</button>
+    <form id="difficulty-input">
+      <input type="number" id="chosen" name="difficulty-input" min="1" max="28" />
+      <input type='submit' value='Apply' />
+    </form>
 
+    <div id="word"></div>
+
+
+    <script src="http://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>-->
     <script src="js/index.js"></script>
   </body>
 </html>

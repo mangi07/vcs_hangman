@@ -15,6 +15,49 @@ get '/' do
 	}
 end
 
+# These routes return responses for client logging.
+get '/game/load' do
+	load_game
+end
+get '/game/new' do
+	new_game
+end
+get '/game/save' do
+	save_game
+end
+
+
+# load game from YAML
+def load_game
+	settings.game_data = Ben::Game.load
+	"Game loaded: difficulty = #{ settings.game_data }"
+end
+
+# find word based on difficulty in GET request
+def new_game
+	response
+	if params["difficulty"]
+		difficulty = params["difficulty"]
+		settings.game_data = Ben::Game.new( Integer difficulty )
+		response = "new game loaded on server"
+	else
+		response = "server couldn't load new game"
+	end
+	return response
+end
+
+# save game to YAML
+def save_game
+	response
+	if settings.game_data
+		settings.game_data.save
+		response = "Game saved on server as YAML file."
+	else
+		response = "No game loaded yet, so no game saved."
+	end
+	return response
+end
+
 # get '/guess' do
 # 	difficulty
 # 	guesses
@@ -36,8 +79,15 @@ end
 
 # TODO
 #
-# Use routes like '/game/load' and '/game/save' and '/game/init'
-# with jquery ajax
+# when loading YAML into Ben::Game object
+#   get the game data (all except the word) in the client dom
+#   (send as JSON? --difficulty, guesses, word string reflecting guesses so far, and used letters)
+#   (you'll need to add functionality for the last two on both the server and the client)
 #
-# cf http://stackoverflow.com/questions/16600420/render-in-html-result-of-ajax-call-with-ruby-sinatra
-#   for an example of how this would work
+# add one more route to check game state and
+#   corresponding ajax call to check guess 
+#   (and of course, before this, functionality to make the guess)
+# 
+# pretty up with CSS (probably bootstrap)
+
+
