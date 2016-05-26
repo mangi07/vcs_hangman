@@ -1,8 +1,11 @@
 require 'yaml'
 
+# TODO add current word string in guessed state: eg: "c_t" if guessing "cat"
+# TODO add used letters string, example: "cto"
+
 module Ben
 	class Game
-		attr_accessor :guesses, :word, :difficulty
+		attr_accessor :guesses, :word, :difficulty, :blanks, :used_letters, :status
 		
 		def initialize( letters_in_word )
 			@difficulty = letters_in_word
@@ -11,6 +14,10 @@ module Ben
 			# Get word from enable.txt based on difficulty with max length of 28 not including newline character
 			# (Used grep on command line to find longest word.)
 			@word = _get_random_word( "enable.txt", @difficulty )
+			@blanks = ""
+			@word.length.times { @blanks << "_" }
+			@used_letters = ""
+			@status = 0 # -1 loss, 0 keep playing, 1 win
 		end
 
 		# returns a Hash containing file object of filtered words and its word count
@@ -46,6 +53,29 @@ module Ben
 				end
 			end
 			return word # If we got here, this should return nil
+		end
+
+		def make_guess( letter )
+			@guesses -= 1
+			@used_letters << letter
+			@word.split("").each_with_index do |c, idx|
+				if letter == c
+					@blanks[ idx ] = letter
+				end
+			end
+		end
+
+		def check_win_loss
+			if @guesses < 1 && @blanks != @word
+				@status = -1
+				return "loss"
+			elsif @blanks == @word
+				@status = 1
+				return "win"
+			else
+				@status = 0
+				return nil
+			end
 		end
 
 		def save

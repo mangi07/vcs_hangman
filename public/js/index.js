@@ -1,3 +1,5 @@
+var gameData; // JSON object
+
 $( document ).ready(function() {
     
     console.log( "ready!" );
@@ -10,6 +12,7 @@ $( document ).ready(function() {
     $( "#save-game" ).click( saveGame );
     $( "#load-game" ).click( loadGame );
     $( "#new-game" ).click( newGame );
+    $( "#letter-form" ).submit( event, makeGuess );
 
     function saveGame() {
     	console.log( $( "#save-game" ).text() );
@@ -28,8 +31,9 @@ $( document ).ready(function() {
     		type: "GET",
     		url: "/game/load",
     		success: function( data ) {
-    			console.log( data );
-    			// call function that loads data into html
+    			gameData = JSON.parse( data );
+    			console.log( gameData );
+    			setUpDom( gameData );
     		}
     	});
 	}
@@ -44,34 +48,51 @@ $( document ).ready(function() {
 
 	function initGame() {
 		var difficulty = parseInt( $( "#chosen" ).val() );
-		var word = "not set by response";
 		$.ajax({
     		type: "GET",
     		url: "/game/new",
     		data: { 'difficulty': difficulty },
     		success: function( data ) {
-    			setUpDom( difficulty );
-    			console.log( data );
+    			gameData = JSON.parse( data );
+    			setUpDom( gameData );
+    			console.log( gameData );
     			// We don't need the difficulty input until next time.
     			$( "#difficulty-input" ).hide(1000);
-    			// call function that loads data into html
     		}
     	});
     	// prevent page refresh to preserve jQuery dom manipulations
     	event.preventDefault();
 	}
 
-	function setUpDom( difficulty ) {
-		$( "#difficulty" ).text( difficulty );
-		guesses = 5;
-		$( "#guesses-remaining" ).text( guesses );
-		showWordBlanks( difficulty );
+	function makeGuess() {
+		var letter = $( "#letter" ).val();
+    	$.ajax({
+    		type: "GET",
+    		url: "/game/guess",
+    		data: { 'letter': letter },
+    		success: function( data ) {
+    			gameData = JSON.parse( data );
+    			console.log( gameData );
+    			setUpDom( gameData );
+    		}
+    	});
+    	// prevent page refresh to preserve jQuery dom manipulations
+    	event.preventDefault();
 	}
 
-	function showWordBlanks( difficulty ) {
+	function setUpDom( gameData ) {
+		$( "#difficulty" ).text( gameData.difficulty );
+		$( "#guesses-remaining" ).text( gameData.guesses );
+		showWordBlanks( gameData );
+		// show used letters here
+		// add logic here to check status for win/loss
+	}
+
+	// modify this when we get to the point where we're actually dealing with the word's current guessed state
+	function showWordBlanks( gameData ) {
 		var str = "";
-		for ( var i = 0; i < difficulty; i++ ) {
-			str += " _ ";
+		for ( var i = 0; i < gameData.difficulty; i++ ) {
+			str += " " + gameData.blanks[ i ];
 		}
 		$( "#word" ).text( str );
 	}

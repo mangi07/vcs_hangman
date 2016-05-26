@@ -1,8 +1,8 @@
 require 'sinatra'
 require 'sinatra/reloader' if development?
 also_reload 'ben.rb'
-
 require_relative 'ben'
+require 'json'
 
 # starting with fresh settings
 set :styles, {:background => "#000", :color => "#fff"}
@@ -25,12 +25,15 @@ end
 get '/game/save' do
 	save_game
 end
+get '/game/guess' do
+	make_guess
+end
 
 
 # load game from YAML
 def load_game
 	settings.game_data = Ben::Game.load
-	"Game loaded: difficulty = #{ settings.game_data }"
+	game_json
 end
 
 # find word based on difficulty in GET request
@@ -39,9 +42,9 @@ def new_game
 	if params["difficulty"]
 		difficulty = params["difficulty"]
 		settings.game_data = Ben::Game.new( Integer difficulty )
-		response = "new game loaded on server"
+		response = game_json
 	else
-		response = "server couldn't load new game"
+		response = "Server couldn't load new game."
 	end
 	return response
 end
@@ -51,37 +54,39 @@ def save_game
 	response
 	if settings.game_data
 		settings.game_data.save
-		response = "Game saved on server as YAML file."
+		response = "Game saved."
 	else
 		response = "No game loaded yet, so no game saved."
 	end
 	return response
 end
 
-# get '/guess' do
-# 	difficulty
-# 	guesses
+def make_guess
+	if params["letter"]
+		letter = params["letter"]
+		settings.game_data.make_guess letter
+		settings.game_data.check_win_loss
+	end
+	return game_json
+end
 
-# 	if params["guess"] && params["guess"] != ""
-# 		guess = params["guess"]
-# 		params["guess"] = ""
-# 	end
-# 	if params["cheat"] && params["cheat"] == "true"
-# 		message << "<p>#{settings.number}</p>"
-# 	end
-# 	message << "<p>You have #{Ben::Counter.get} guesses remaining</p>"
-# 	erb :index, :locals => {
-# 		:styles => settings.styles,
-# 		:message => message
-# 	}
-# 	#throw params.inspect
-# end
+def game_json
+	game_hash = {}
+	game = settings.game_data
+	game_hash = game.instance_variables.each_with_object( {} ) do |var, game_hash|
+		# We don't want to send the word being guessed: 
+		unless var.to_s == "@word"
+			game_hash[ var.to_s.delete( "@" ) ] = game.instance_variable_get( var )
+		end 
+	end
+	game_json = JSON.generate( game_hash )
+	"#{ game_json }"
+end
 
 # TODO
 #
 # when loading YAML into Ben::Game object
 #   get the game data (all except the word) in the client dom
-#   (send as JSON? --difficulty, guesses, word string reflecting guesses so far, and used letters)
 #   (you'll need to add functionality for the last two on both the server and the client)
 #
 # add one more route to check game state and
