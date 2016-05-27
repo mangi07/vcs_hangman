@@ -21,6 +21,8 @@ puts "*** End Ben::Game test ***"
 puts
 puts
 puts
+
+
 puts "*** Ben::Game object to JSON string test ***"
 puts
 puts "Creating new game for JSON test..."
@@ -44,6 +46,8 @@ puts "*** End Ben::Game object to JSON string test ***"
 puts
 puts
 puts
+
+
 puts "*** Ben::Game make guess test ***"
 puts
 puts "Creating new game..."
@@ -66,21 +70,4 @@ while true
 		break
 	end
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

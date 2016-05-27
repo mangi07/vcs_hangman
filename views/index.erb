@@ -1,37 +1,75 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
-  	<style>
-  		body {
-  			background: <%= styles[:background] %>;
-  			color: <%= styles[:color] %>;
-  		}
-  	</style>
-  </head>
-  <body>
-    <div>Difficulty: <span id="difficulty"></span></div>
-    <div>Guesses Remaining: <span id="guesses-remaining"></span></div>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   	
-    <form id="letter-form">
-  		<input type='text' id="letter" name='guess' />
-  		<input type='submit' value='Guess!' />
-    </form>
-    <div id="word"></div>
-    <div id="used-letters"></div>
+    <!-- Latest compiled and minified CSS -->
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">-->
+    <link rel="stylesheet" href="https://bootswatch.com/darkly/bootstrap.min.css">
 
+    <!-- Optional theme -->
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">-->
 
-    <button id="save-game">Save Game</button>
-    <button id="load-game">Load Saved Game</button>
-    <button id="new-game">New Game</button>
-    <form id="difficulty-input">
-      <input type="number" id="chosen" name="difficulty-input" min="1" max="28" />
-      <input type='submit' value='Apply' />
-    </form>
+    <style>
+      .col-centered{
+        float: none;
+        margin: 0 auto;
+      }
+    </style>
+  </head>
 
-    <div id="word"></div>
+  <body class="container-fluid col-centered">
 
+    <h1>HANGMAN</h1>
+
+    <div class="row">
+      <div class="col-md-6">Difficulty: <span id="difficulty"></span></div>
+      <div class="col-md-6">Guesses Remaining: <span id="guesses-remaining"></span></div>
+  	</div>
+
+    <div class="row col-centered">
+      <form class="text-left" id="letter-form">
+    		<input type='text' id="letter" name='guess' />
+    		<input type='submit' class="btn btn-success" value='Guess!' />
+      </form>
+      <div class="row col-centered">
+        <p>
+          <div class="col-md-2 text-left">WORD: </div>
+          <div class="col-md-4 text-left" id="word"></div>
+        </p>
+      </div>
+      <div class="row col-centered">
+        <p>
+          <div class="col-md-2 text-left">USED LETTERS: </div>
+          <div class="col-md-4 text-left" id="used-letters"></div>
+        </p>
+      </div>
+    </div>
+
+    <div class="row col-centered">
+      <button type="button" class="col-md-4 btn btn-success" id="save-game">
+        Save Game
+      </button>
+      <button type="button" class="col-md-4 btn btn-warning" id="load-game">
+        Load Saved Game
+      </button>
+      <button type="button" class="col-md-2 btn btn-danger" id="new-game">
+        New Game
+      </button>
+
+      <form class="col-md-2" id="difficulty-input">
+        <input type="number" id="chosen" name="difficulty-input" min="1" max="28" />
+        <input type='submit' class="btn btn-danger btn-small" value='Apply' />
+      </form>
+    </div>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
     <script src="http://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>-->
     <script src="js/index.js"></script>
+
   </body>
 </html>

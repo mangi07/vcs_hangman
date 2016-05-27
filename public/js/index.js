@@ -135,7 +135,6 @@ $( document ).ready(function() {
 	}
 
 	function revealWord( word ) {
-		alert( word );
 		var revealedHTML = "";
 		var missedIndices = [];
 		for ( var i = 0; i < word.length; i++ ) {
@@ -163,7 +162,6 @@ $( document ).ready(function() {
     		type: "GET",
     		url: "/game/clear",
     		success: function( data ) {
-    			alert( data );
     			checkStatus();
     		}
     	});

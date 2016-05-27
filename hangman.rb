@@ -10,7 +10,6 @@ set :game_data, nil
 
 get '/' do
 	erb :index, :locals => {
-		:styles => settings.styles,
 		:game_data => settings.game_data
 	}
 end
