@@ -1,7 +1,6 @@
 require 'yaml'
 
-# TODO add current word string in guessed state: eg: "c_t" if guessing "cat"
-# TODO add used letters string, example: "cto"
+# TODO refactor file names "game_data" and "enable.txt" to variables
 
 module Ben
 	class Game
@@ -85,6 +84,18 @@ module Ben
 		def self.load
 			game_data = File.open( "game_data", "r" ) { |f| f.readlines.join }
 			YAML::load( game_data )
+		end
+
+		# Add to tests/ben_test.rb
+		def self.exist?
+			File.exist?( "game_data" )
+		end
+
+		def delete_file
+			# File.unlink
+			if File.exist?( "game_data" )
+				File.unlink( "game_data" )
+			end
 		end
 
 	end

@@ -3,7 +3,7 @@ var gameData; // JSON object
 $( document ).ready(function() {
     
     console.log( "ready!" );
-    var guesses = 5;
+    checkStatus( gameData );
 
     // Only show when setting difficulty level
     $( "#difficulty-input" ).hide();
@@ -58,6 +58,9 @@ $( document ).ready(function() {
     			console.log( gameData );
     			// We don't need the difficulty input until next time.
     			$( "#difficulty-input" ).hide(1000);
+    			$( "#save-game" ).show();
+				$( "#load-game" ).show();
+				$( "#letter-form" ).show();
     		}
     	});
     	// prevent page refresh to preserve jQuery dom manipulations
@@ -74,6 +77,7 @@ $( document ).ready(function() {
     			gameData = JSON.parse( data );
     			console.log( gameData );
     			setUpDom( gameData );
+    			checkStatus( gameData );
     		}
     	});
     	// prevent page refresh to preserve jQuery dom manipulations
@@ -84,11 +88,9 @@ $( document ).ready(function() {
 		$( "#difficulty" ).text( gameData.difficulty );
 		$( "#guesses-remaining" ).text( gameData.guesses );
 		showWordBlanks( gameData );
-		// show used letters here
-		// add logic here to check status for win/loss
+		showUsedLetters( gameData );
 	}
 
-	// modify this when we get to the point where we're actually dealing with the word's current guessed state
 	function showWordBlanks( gameData ) {
 		var str = "";
 		for ( var i = 0; i < gameData.difficulty; i++ ) {
@@ -96,6 +98,45 @@ $( document ).ready(function() {
 		}
 		$( "#word" ).text( str );
 	}
+
+	function showUsedLetters( gameData ) {
+		var str = "";
+		for (var i = 0; i < gameData.used_letters.length; i++ ) {
+			str += " " + gameData.used_letters[ i ];
+		}
+		$( "#used-letters" ).text( str );
+	}
+
+	function checkStatus( gameData ) {
+		if ( gameData == undefined ) {
+			// hide "Save Game" button, "Guess!" form, and,
+			//   "Load Game" button if saved state on sever
+			$( "#save-game" ).hide();
+			$( "#load-game" ).hide(); // TODO here, use method to check for saved game state on server
+			$( "#letter-form" ).hide();
+		} else if ( gameData.status == -1 ) {
+			clearGame( "YOU LOST!", gameData );
+		} else if ( gameData.status == 1 ) {
+			clearGame( "YOU WON!", gameData );
+		}
+	}
+
+	function clearGame( message, gameData ) {
+		alert( message );
+		gameData = undefined;
+    	$.ajax({
+    		type: "GET",
+    		url: "/game/clear",
+    		success: function( data ) {
+    			alert( data );
+    			checkStatus( gameData );
+    		}
+    	});
+    	// prevent page refresh to preserve jQuery dom manipulations
+    	event.preventDefault();
+	}
+
+	// TODO add function here to check for saved game state on server
 
 });
 

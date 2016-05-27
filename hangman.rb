@@ -28,6 +28,9 @@ end
 get '/game/guess' do
 	make_guess
 end
+get '/game/clear' do
+	clear_saved_game
+end
 
 
 # load game from YAML
@@ -83,11 +86,12 @@ def game_json
 	"#{ game_json }"
 end
 
+# TODO test this
+def clear_saved_game
+	Ben::Game.delete_file
+	settings.game_data = nil
+end
 # TODO
-#
-# when loading YAML into Ben::Game object
-#   get the game data (all except the word) in the client dom
-#   (you'll need to add functionality for the last two on both the server and the client)
 #
 # add one more route to check game state and
 #   corresponding ajax call to check guess 
