@@ -55,12 +55,16 @@ module Ben
 		end
 
 		def make_guess( letter )
-			@guesses -= 1
+			wrong_guess = true
 			@used_letters << letter
 			@word.split("").each_with_index do |c, idx|
 				if letter == c
 					@blanks[ idx ] = letter
+					wrong_guess = false
 				end
+			end
+			if wrong_guess
+				@guesses -= 1
 			end
 		end
 

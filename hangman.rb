@@ -31,6 +31,12 @@ end
 get '/game/clear' do
 	clear_saved_game
 end
+get '/game/checkSaved' do
+	game_saved?
+end
+get '/game/reveal' do
+	settings.game_data.word
+end
 
 
 # load game from YAML
@@ -86,16 +92,21 @@ def game_json
 	"#{ game_json }"
 end
 
-# TODO test this
 def clear_saved_game
-	Ben::Game.delete_file
+	settings.game_data.delete_file
 	settings.game_data = nil
+	"Game data on server deleted."
 end
+
+def game_saved?
+	if Ben::Game.exist?
+		return "true"
+	else
+		return "false"
+	end
+end
+
 # TODO
-#
-# add one more route to check game state and
-#   corresponding ajax call to check guess 
-#   (and of course, before this, functionality to make the guess)
 # 
 # pretty up with CSS (probably bootstrap)
 

@@ -3,7 +3,7 @@ var gameData; // JSON object
 $( document ).ready(function() {
     
     console.log( "ready!" );
-    checkStatus( gameData );
+    checkStatus();
 
     // Only show when setting difficulty level
     $( "#difficulty-input" ).hide();
@@ -33,6 +33,7 @@ $( document ).ready(function() {
     		success: function( data ) {
     			gameData = JSON.parse( data );
     			console.log( gameData );
+    			showPlayFields();
     			setUpDom( gameData );
     		}
     	});
@@ -58,9 +59,7 @@ $( document ).ready(function() {
     			console.log( gameData );
     			// We don't need the difficulty input until next time.
     			$( "#difficulty-input" ).hide(1000);
-    			$( "#save-game" ).show();
-				$( "#load-game" ).show();
-				$( "#letter-form" ).show();
+    			showPlayFields();
     		}
     	});
     	// prevent page refresh to preserve jQuery dom manipulations
@@ -77,7 +76,7 @@ $( document ).ready(function() {
     			gameData = JSON.parse( data );
     			console.log( gameData );
     			setUpDom( gameData );
-    			checkStatus( gameData );
+    			checkStatus();
     		}
     	});
     	// prevent page refresh to preserve jQuery dom manipulations
@@ -107,21 +106,57 @@ $( document ).ready(function() {
 		$( "#used-letters" ).text( str );
 	}
 
-	function checkStatus( gameData ) {
+	function checkStatus() {
 		if ( gameData == undefined ) {
 			// hide "Save Game" button, "Guess!" form, and,
 			//   "Load Game" button if saved state on sever
 			$( "#save-game" ).hide();
-			$( "#load-game" ).hide(); // TODO here, use method to check for saved game state on server
+			if ( ! gameIsSaved() ) {
+				$( "#load-game" ).hide();
+			}
 			$( "#letter-form" ).hide();
 		} else if ( gameData.status == -1 ) {
-			clearGame( "YOU LOST!", gameData );
+			getWord();
+			clearGame( "YOU LOST!" );
 		} else if ( gameData.status == 1 ) {
-			clearGame( "YOU WON!", gameData );
+			clearGame( "YOU WON!" );
 		}
 	}
 
-	function clearGame( message, gameData ) {
+	function getWord() {
+		$.ajax({
+    		type: "GET",
+    		url: "/game/reveal",
+    		async: false,
+    		success: function( data ) {
+    			revealWord( data );
+    		}
+    	});
+	}
+
+	function revealWord( word ) {
+		alert( word );
+		var revealedHTML = "";
+		var missedIndices = [];
+		for ( var i = 0; i < word.length; i++ ) {
+			if ( gameData.blanks[ i ] == '_' ) {
+				missedIndices.push( i ); // debug breakpoint
+			}
+		}
+		// craft revealed word with alternating colors and fill in as html in id word
+		for ( var j = 0; j < word.length; j++ ) {
+			if ( j == missedIndices[ 0 ] ) {
+				missedIndices.shift();
+				revealedHTML += " <span style='color:#66ffe5'>" + word[ j ] + "</span>";
+			} else {
+				revealedHTML += " " + word[ j ];
+			}
+		}
+		console.log( revealedHTML );
+		$( "#word" ).html( revealedHTML );
+	}
+
+	function clearGame( message ) {
 		alert( message );
 		gameData = undefined;
     	$.ajax({
@@ -129,14 +164,35 @@ $( document ).ready(function() {
     		url: "/game/clear",
     		success: function( data ) {
     			alert( data );
-    			checkStatus( gameData );
+    			checkStatus();
     		}
     	});
     	// prevent page refresh to preserve jQuery dom manipulations
     	event.preventDefault();
 	}
 
-	// TODO add function here to check for saved game state on server
+	function gameIsSaved() {
+		response = false;
+		$.ajax({
+			type: "GET",
+			async: false,
+			url: "/game/checkSaved",
+			success: function( data ) {
+				if ( data == "true" ) {
+					response = true;
+				} else if ( data == "false" ) {
+					response = false;
+				}
+			}
+    	});
+    	return response;
+	}
+
+	function showPlayFields() {
+		$( "#save-game" ).show();
+		$( "#load-game" ).show();
+		$( "#letter-form" ).show();
+	}
 
 });
 
