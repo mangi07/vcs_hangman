@@ -1,6 +1,6 @@
 require 'sinatra'
 require 'sinatra/reloader' if development?
-also_reload 'ben.rb'
+#also_reload 'ben.rb'
 require_relative 'ben'
 require 'json'
 
